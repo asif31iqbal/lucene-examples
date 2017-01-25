@@ -1,0 +1,5 @@
+java -cp "target/Apache-Lucene-1.0.jar:target/classes/lib/*" m1_lab1.IndexFiles -index /Users/asifiqbal/Development/workspace/lucene-examples/M1-Lab1/lucene4/index -docs /Users/asifiqbal/Development/workspace/lucene-examples/M1-Lab1/documents
+
+java -cp "target/Apache-Lucene-1.0.jar:target/classes/lib/*" m1_lab1.IndexFiles -index /Users/asifiqbal/Development/workspace/lucene-examples/M1-Lab1/lucene4/index -docs /Users/asifiqbal/Development/workspace/lucene-6.4.0/core/src
+
+java -cp "target/Apache-Lucene-1.0.jar:target/classes/lib/*" m1_lab1.SearchFiles -index /Users/asifiqbal/Development/workspace/lucene-examples/M1-Lab1/lucene4/index
