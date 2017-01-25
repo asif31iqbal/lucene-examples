@@ -213,7 +213,7 @@
 
     <name>Apache-Lucene</name>
 
-    <!--
+    
     <build>
         <plugins>
             <plugin>
@@ -253,5 +253,5 @@
 
         </plugins>
     </build>
-    -->
+    
 </project>
