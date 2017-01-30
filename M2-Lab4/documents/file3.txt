@@ -1,0 +1,3 @@
+fishing fished fisher
+swimming swimmers
+stemmer stemming stemmed

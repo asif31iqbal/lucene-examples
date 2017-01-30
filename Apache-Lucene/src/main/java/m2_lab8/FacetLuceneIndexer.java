@@ -12,8 +12,10 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.document.IntField;
 import org.apache.lucene.document.TextField;
-import org.apache.lucene.facet.index.CategoryDocumentBuilder;
-import org.apache.lucene.facet.index.params.DefaultFacetIndexingParams;
+import org.apache.lucene.facet.FacetField;
+import org.apache.lucene.facet.FacetsConfig;
+//import org.apache.lucene.facet.index.CategoryDocumentBuilder;
+//import org.apache.lucene.facet.index.params.DefaultFacetIndexingParams;
 import org.apache.lucene.facet.taxonomy.CategoryPath;
 import org.apache.lucene.facet.taxonomy.TaxonomyWriter;
 import org.apache.lucene.facet.taxonomy.directory.DirectoryTaxonomyWriter;
@@ -44,7 +46,12 @@ class FacetLuceneIndexer {
 		IndexWriter indexWriter = new IndexWriter(FSDirectory.open(new File(indexDirectory)), writerConfig);
 
 		TaxonomyWriter taxonomyWriter = new DirectoryTaxonomyWriter(new MMapDirectory(new File(taxonomyDirectory)), OpenMode.CREATE);
-		CategoryDocumentBuilder categoryDocumentBuilder = new CategoryDocumentBuilder(taxonomyWriter, new DefaultFacetIndexingParams());
+		//CategoryDocumentBuilder categoryDocumentBuilder = new CategoryDocumentBuilder(taxonomyWriter, new DefaultFacetIndexingParams());
+		FacetsConfig config = new FacetsConfig();
+		config.setIndexFieldName("Category", "book_category");
+		config.setIndexFieldName("Author", "authors");
+		config.setHierarchical("Category", true);
+		config.setMultiValued("Author", true);
 
 		String content = IOUtils.toString(new FileInputStream(jsonFileName));
 		JSONArray bookArray = new JSONArray(content);
@@ -61,6 +68,14 @@ class FacetLuceneIndexer {
 			int id = book.getInt("id");
 			String title = book.getString("title");
 			String bookCategory = book.getString("book_category");
+			String[] catgoryParts = bookCategory.split("/");
+			List<String> categoryPartList = new ArrayList<String>(); 
+			List<String> authorList = new ArrayList<String>(); 
+			for(String p : catgoryParts) {
+				if(!p.equals("")) {
+					categoryPartList.add(p);
+				}
+			}
 			
     		List<CategoryPath> categoryPaths = new ArrayList<CategoryPath>();
 			String authorsString = "";
@@ -72,10 +87,11 @@ class FacetLuceneIndexer {
 				}
 				categoryPaths.add(new CategoryPath("author", author));
 				authorsString += author;
+				authorList.add(author);
 			}
 			categoryPaths.add(new CategoryPath("book_category" + bookCategory, '/'));
-			categoryDocumentBuilder.setCategoryPaths(categoryPaths);
-			categoryDocumentBuilder.build(document);
+//			categoryDocumentBuilder.setCategoryPaths(categoryPaths);
+//			categoryDocumentBuilder.build(document);
 			
 			idField.setIntValue(id);
 			titleField.setStringValue(title);
@@ -86,8 +102,12 @@ class FacetLuceneIndexer {
 			document.add(titleField);
 			document.add(authorsField);
 			document.add(bookCategoryField);
+			document.add(new FacetField("Category", categoryPartList.toArray(new String[categoryPartList.size()])));
+			for(String at : authorList) {
+				document.add(new FacetField("Author", at));
+			}
 			
-			indexWriter.addDocument(document);
+			indexWriter.addDocument(config.build(taxonomyWriter, document));
 			
 			System.out.printf("Book: id=%d, title=%s, book_category=%s, authors=%s\n",
 				id, title, bookCategory, authors);
