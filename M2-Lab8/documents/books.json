@@ -3,7 +3,7 @@
 		"id": 1,
 		"title": "a funny book",
 		"authors": ["Jean Bon", "Alex Terieur"],
-		"book_category": "/novel/comedy"
+		"book_category": "/novel/comedy/typeOne"
 	},
 	{
 		"id": 2,
@@ -15,7 +15,7 @@
 		"id": 3,
 		"title": "A hilarious book",
 		"authors": ["Marc Assin", "Harry Covert"],
-		"book_category": "/book/comedy"
+		"book_category": "/book/comedy/typeTwo"
 	},
 	{
 		"id": 4,
@@ -28,5 +28,5 @@
 		"title": "A very sad story",
 		"authors": ["Gerard Menvusa", "Alain Terieur"],
 		"book_category": "/novel/tragedy"
-	}	
+	}
 ]

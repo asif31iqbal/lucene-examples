@@ -53,7 +53,7 @@ public class LuceneBooleanQueryDemo {
 		booleanQuery.add(new TermQuery(new Term(FIELD_CONTENTS, "mushrooms")), Occur.MUST);
 		booleanQuery.add(new TermQuery(new Term(FIELD_CONTENTS, "steak")), Occur.MUST);
 		displayQuery(booleanQuery);
-			
+			 
                 
 		TopDocs results = searcher.search(booleanQuery, 5 * hitsPerPage);
 		ScoreDoc[] hits = results.scoreDocs;
