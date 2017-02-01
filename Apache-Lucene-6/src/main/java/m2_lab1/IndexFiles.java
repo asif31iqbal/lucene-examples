@@ -1,7 +1,6 @@
-package m1_lab1;
+package m2_lab1;
 
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.LongPoint;
@@ -23,6 +22,8 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.Date;
+
+import org.apache.lucene.analysis.core.SimpleAnalyzer;
 
 /**
  * Index all text files under a directory.
@@ -76,7 +77,8 @@ public class IndexFiles {
 
 			Directory dir = FSDirectory.open(Paths.get(indexPath));
 			// :Post-Release-Update-Version.LUCENE_XY:
-			Analyzer analyzer = new StandardAnalyzer();
+			// Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_4_10_0);
+			Analyzer analyzer = new SimpleAnalyzer();
 			IndexWriterConfig iwc = new IndexWriterConfig(analyzer);
 
 			if (create) {

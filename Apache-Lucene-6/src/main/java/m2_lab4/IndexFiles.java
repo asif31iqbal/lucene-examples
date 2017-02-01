@@ -1,18 +1,4 @@
-package m1_lab1;
-
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.LongPoint;
-import org.apache.lucene.document.StringField;
-import org.apache.lucene.document.TextField;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.IndexWriterConfig.OpenMode;
-import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.FSDirectory;
+package m2_lab4;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -23,6 +9,19 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.Date;
+
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.document.LongPoint;
+import org.apache.lucene.document.StringField;
+import org.apache.lucene.document.TextField;
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.index.IndexWriterConfig.OpenMode;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.FSDirectory;
 
 /**
  * Index all text files under a directory.
@@ -76,7 +75,7 @@ public class IndexFiles {
 
 			Directory dir = FSDirectory.open(Paths.get(indexPath));
 			// :Post-Release-Update-Version.LUCENE_XY:
-			Analyzer analyzer = new StandardAnalyzer();
+			Analyzer analyzer = new MySynonymAnalyzer();
 			IndexWriterConfig iwc = new IndexWriterConfig(analyzer);
 
 			if (create) {

@@ -1,4 +1,4 @@
-package m1_lab1;
+package m2_lab3;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -9,7 +9,6 @@ import java.nio.file.Paths;
 import java.util.Date;
 
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
@@ -29,7 +28,8 @@ public class SearchFiles {
 	/** Simple command-line based search demo. */
 	public static void main(String[] args) throws Exception {
 		String usage = "Usage:\tjava org.apache.lucene.demo.SearchFiles [-index dir] [-field f] [-repeat n] [-queries file] [-query string] [-raw] [-paging hitsPerPage]\n\nSee http://lucene.apache.org/core/4_1_0/demo/ for details.";
-		if (args.length > 0 && ("-h".equals(args[0]) || "-help".equals(args[0]))) {
+		if (args.length > 0
+				&& ("-h".equals(args[0]) || "-help".equals(args[0]))) {
 			System.out.println(usage);
 			System.exit(0);
 		}
@@ -63,23 +63,27 @@ public class SearchFiles {
 			} else if ("-paging".equals(args[i])) {
 				hitsPerPage = Integer.parseInt(args[i + 1]);
 				if (hitsPerPage <= 0) {
-					System.err.println("There must be at least 1 hit per page.");
+					System.err
+							.println("There must be at least 1 hit per page.");
 					System.exit(1);
 				}
 				i++;
 			}
 		}
 
-		IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(index)));
+		IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths
+				.get(index)));
 		IndexSearcher searcher = new IndexSearcher(reader);
 		// :Post-Release-Update-Version.LUCENE_XY:
-		Analyzer analyzer = new StandardAnalyzer();
+		Analyzer analyzer = new MyStemmingAnalyzer();
 
 		BufferedReader in = null;
 		if (queries != null) {
-			in = new BufferedReader(new InputStreamReader(new FileInputStream(queries), StandardCharsets.UTF_8));
+			in = new BufferedReader(new InputStreamReader(new FileInputStream(
+					queries), StandardCharsets.UTF_8));
 		} else {
-			in = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
+			in = new BufferedReader(new InputStreamReader(System.in,
+					StandardCharsets.UTF_8));
 		}
 		// :Post-Release-Update-Version.LUCENE_XY:
 		QueryParser parser = new QueryParser(field, analyzer);
@@ -108,10 +112,12 @@ public class SearchFiles {
 					searcher.search(query, 100);
 				}
 				Date end = new Date();
-				System.out.println("Time: " + (end.getTime() - start.getTime()) + "ms");
+				System.out.println("Time: " + (end.getTime() - start.getTime())
+						+ "ms");
 			}
 
-			doPagingSearch(in, searcher, query, hitsPerPage, raw, queries == null && queryString == null);
+			doPagingSearch(in, searcher, query, hitsPerPage, raw,
+					queries == null && queryString == null);
 
 			if (queryString != null) {
 				break;
@@ -131,8 +137,9 @@ public class SearchFiles {
 	 * collected.
 	 * 
 	 */
-	public static void doPagingSearch(BufferedReader in, IndexSearcher searcher, Query query, int hitsPerPage,
-			boolean raw, boolean interactive) throws IOException {
+	public static void doPagingSearch(BufferedReader in,
+			IndexSearcher searcher, Query query, int hitsPerPage, boolean raw,
+			boolean interactive) throws IOException {
 
 		// Collect enough docs to show 5 pages
 		TopDocs results = searcher.search(query, 5 * hitsPerPage);
@@ -146,8 +153,10 @@ public class SearchFiles {
 
 		while (true) {
 			if (end > hits.length) {
-				System.out.println("Only results 1 - " + hits.length + " of " + numTotalHits
-						+ " total matching documents collected.");
+				System.out
+						.println("Only results 1 - " + hits.length + " of "
+								+ numTotalHits
+								+ " total matching documents collected.");
 				System.out.println("Collect more (y/n) ?");
 				String line = in.readLine();
 				if (line.length() == 0 || line.charAt(0) == 'n') {
@@ -161,7 +170,8 @@ public class SearchFiles {
 
 			for (int i = start; i < end; i++) {
 				if (raw) { // output raw format
-					System.out.println("doc=" + hits[i].doc + " score=" + hits[i].score);
+					System.out.println("doc=" + hits[i].doc + " score="
+							+ hits[i].score);
 					continue;
 				}
 
@@ -174,7 +184,8 @@ public class SearchFiles {
 						System.out.println("   Title: " + doc.get("title"));
 					}
 				} else {
-					System.out.println((i + 1) + ". " + "No path for this document");
+					System.out.println((i + 1) + ". "
+							+ "No path for this document");
 				}
 
 			}
@@ -193,7 +204,8 @@ public class SearchFiles {
 					if (start + hitsPerPage < numTotalHits) {
 						System.out.print("(n)ext page, ");
 					}
-					System.out.println("(q)uit or enter number to jump to a page.");
+					System.out
+							.println("(q)uit or enter number to jump to a page.");
 
 					String line = in.readLine();
 					if (line.length() == 0 || line.charAt(0) == 'q') {
