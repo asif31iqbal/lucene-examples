@@ -73,7 +73,7 @@ class FacetLuceneAdvancedSearcher {
 		for(ScoreDoc scoreDoc: topScoreDocCollector.topDocs().scoreDocs) {
 			Document document = indexReader.document(scoreDoc.doc);
 			System.out.printf("- book: id=%s, title=%s, book_category=%s, authors=%s, score=%f\n",
-					document.get("id"), document.get("title"),
+					document.get("id_stored"), document.get("title"),
 					document.get("book_category"),
 					document.get("authors"),
 					scoreDoc.score);
