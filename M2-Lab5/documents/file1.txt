@@ -2,3 +2,4 @@ hamburger
 french fries
 mushrooms
 artichokes
+steak

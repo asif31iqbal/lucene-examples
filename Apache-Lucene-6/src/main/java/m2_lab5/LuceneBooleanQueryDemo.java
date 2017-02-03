@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Iterator;
 
@@ -11,6 +12,8 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.StringField;
+import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.CorruptIndexException;
 //import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexReader;
@@ -49,9 +52,10 @@ public class LuceneBooleanQueryDemo {
 		IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(INDEX_DIRECTORY)));
 		IndexSearcher searcher = new IndexSearcher(reader);
 		
-		BooleanQuery booleanQuery = new BooleanQuery(false, hitsPerPage, null);
-		booleanQuery.add(new TermQuery(new Term(FIELD_CONTENTS, "mushrooms")), Occur.MUST);
-		booleanQuery.add(new TermQuery(new Term(FIELD_CONTENTS, "steak")), Occur.MUST);
+		BooleanQuery booleanQuery = new BooleanQuery.Builder()
+										.add(new TermQuery(new Term(FIELD_CONTENTS, "mushrooms")), Occur.MUST)
+										.add(new TermQuery(new Term(FIELD_CONTENTS, "steak")), Occur.MUST)
+										.build();
 		displayQuery(booleanQuery);
 			 
                 
@@ -62,9 +66,10 @@ public class LuceneBooleanQueryDemo {
                 
                 
                 
-		booleanQuery = new BooleanQuery();
-		booleanQuery.add(new TermQuery(new Term(FIELD_CONTENTS, "milk")), Occur.MUST);
-		booleanQuery.add(new TermQuery(new Term(FIELD_CONTENTS, "eggs")), Occur.MUST);
+		booleanQuery = new BooleanQuery.Builder()
+										.add(new TermQuery(new Term(FIELD_CONTENTS, "milk")), Occur.MUST)
+										.add(new TermQuery(new Term(FIELD_CONTENTS, "eggs")), Occur.MUST)
+										.build();
 		displayQuery(booleanQuery);
 		results = searcher.search(booleanQuery, 5 * hitsPerPage);
                 hits = results.scoreDocs;
@@ -72,36 +77,40 @@ public class LuceneBooleanQueryDemo {
                 
                 
 
-		booleanQuery = new BooleanQuery();
-		booleanQuery.add(new TermQuery(new Term(FIELD_CONTENTS, "mushrooms")), Occur.MUST);
-		booleanQuery.add(new TermQuery(new Term(FIELD_CONTENTS, "steak")), Occur.SHOULD);
+		booleanQuery = new BooleanQuery.Builder()
+										.add(new TermQuery(new Term(FIELD_CONTENTS, "mushrooms")), Occur.MUST)
+										.add(new TermQuery(new Term(FIELD_CONTENTS, "steak")), Occur.SHOULD)
+										.build();
 		displayQuery(booleanQuery);
 		results = searcher.search(booleanQuery, 5 * hitsPerPage);
                 hits = results.scoreDocs;
 		displayHits(hits);
                 
-		booleanQuery = new BooleanQuery();
-                booleanQuery.add(new TermQuery(new Term(FIELD_CONTENTS, "cheese")), Occur.MUST);
-		booleanQuery.add(new TermQuery(new Term(FIELD_CONTENTS, "mushrooms")), Occur.SHOULD);
-		booleanQuery.add(new TermQuery(new Term(FIELD_CONTENTS, "steak")), Occur.SHOULD);
+		booleanQuery = new BooleanQuery.Builder()
+										.add(new TermQuery(new Term(FIELD_CONTENTS, "cheese")), Occur.MUST)
+										.add(new TermQuery(new Term(FIELD_CONTENTS, "mushrooms")), Occur.SHOULD)
+										.add(new TermQuery(new Term(FIELD_CONTENTS, "steak")), Occur.SHOULD)
+										.build();
 		displayQuery(booleanQuery);
 		results = searcher.search(booleanQuery, 5 * hitsPerPage);
                 hits = results.scoreDocs;
 		displayHits(hits);
                 
-		booleanQuery = new BooleanQuery();
-                booleanQuery.add(new TermQuery(new Term(FIELD_CONTENTS, "cheese")), Occur.MUST);
-		booleanQuery.add(new TermQuery(new Term(FIELD_CONTENTS, "mushrooms")), Occur.MUST_NOT);
-		booleanQuery.add(new TermQuery(new Term(FIELD_CONTENTS, "steak")), Occur.SHOULD);
+		booleanQuery = new BooleanQuery.Builder()
+										.add(new TermQuery(new Term(FIELD_CONTENTS, "cheese")), Occur.MUST)
+										.add(new TermQuery(new Term(FIELD_CONTENTS, "mushrooms")), Occur.MUST_NOT)
+										.add(new TermQuery(new Term(FIELD_CONTENTS, "steak")), Occur.SHOULD)
+										.build();
 		displayQuery(booleanQuery);
 		results = searcher.search(booleanQuery, 5 * hitsPerPage);
                 hits = results.scoreDocs;
 		displayHits(hits);    
                 
-		booleanQuery = new BooleanQuery();
-                booleanQuery.add(new TermQuery(new Term(FIELD_CONTENTS, "cheese")), Occur.MUST);
-		booleanQuery.add(new TermQuery(new Term(FIELD_CONTENTS, "mushrooms")), Occur.MUST_NOT);
-		booleanQuery.add(new TermQuery(new Term(FIELD_CONTENTS, "steak")), Occur.MUST_NOT);
+		booleanQuery = new BooleanQuery.Builder()
+										.add(new TermQuery(new Term(FIELD_CONTENTS, "cheese")), Occur.MUST)
+										.add(new TermQuery(new Term(FIELD_CONTENTS, "mushrooms")), Occur.MUST_NOT)
+										.add(new TermQuery(new Term(FIELD_CONTENTS, "steak")), Occur.MUST_NOT)
+										.build();
 		displayQuery(booleanQuery);
 		results = searcher.search(booleanQuery, 5 * hitsPerPage);
                 hits = results.scoreDocs;
@@ -112,10 +121,10 @@ public class LuceneBooleanQueryDemo {
         //////////////////////////////////////////////////////////////////////// 
 	public static void createIndex() throws CorruptIndexException, LockObtainFailedException, IOException 
 	{
-		Directory dir = FSDirectory.open(new File(INDEX_DIRECTORY));
-		Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_4_10_0);
+		Directory dir = FSDirectory.open(Paths.get(INDEX_DIRECTORY));
+		Analyzer analyzer = new StandardAnalyzer();
 		boolean recreateIndexIfExists = true;
-		IndexWriterConfig iwc = new IndexWriterConfig(Version.LUCENE_4_10_0, analyzer);
+		IndexWriterConfig iwc = new IndexWriterConfig(analyzer);
 		IndexWriter Writer = new IndexWriter(dir, iwc);
 		File dir1 = new File(FILES_TO_INDEX_DIRECTORY);
 		File[] files = dir1.listFiles();
@@ -123,21 +132,21 @@ public class LuceneBooleanQueryDemo {
 			Document document = new Document();
 
 			String path = file.getName();
-			document.add(new Field(FIELD_PATH, path, Field.Store.YES, Field.Index.NOT_ANALYZED));
+			document.add(new StringField(FIELD_PATH, path, Field.Store.YES));
 
 			Reader reader = new FileReader(file);
-			document.add(new Field(FIELD_CONTENTS, reader));
+			document.add(new TextField(FIELD_CONTENTS, reader));
 
 			Writer.addDocument(document);
 		}
 		//indexWriter.optimize();
-	Writer.close();
+		Writer.close();
 	}
 
         ////////////////////////////////////////////////////////////////////////
 	public static void searchIndexWithQueryParser(String searchString) throws IOException, ParseException {
 		System.out.println("\nSearching for '" + searchString + "' using QueryParser");
-		IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(INDEX_DIRECTORY)));
+		IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(INDEX_DIRECTORY)));
 		IndexSearcher searcher = new IndexSearcher(reader);
 
 		QueryParser queryParser = new QueryParser(FIELD_CONTENTS, new StandardAnalyzer());
@@ -156,7 +165,7 @@ public class LuceneBooleanQueryDemo {
 		Iterator<ScoreDoc> it = Arrays.asList(hits).iterator();
 		while (it.hasNext()) {
 			ScoreDoc hitt = it.next();
-			IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(INDEX_DIRECTORY)));
+			IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(INDEX_DIRECTORY)));
 			IndexSearcher searcher = new IndexSearcher(reader);
 			int docId = hitt.doc;
 			Document document = searcher.doc(docId);
